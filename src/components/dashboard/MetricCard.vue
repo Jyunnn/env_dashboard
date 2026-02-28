@@ -1,10 +1,11 @@
 <template>
   <div 
-    class="bg-aqm-card rounded-xl p-3 md:p-4 flex flex-col justify-between transition-all duration-300 hover:bg-opacity-80 h-full min-h-[120px]"
+    class="bg-aqm-card rounded-xl p-3 md:p-4 flex flex-col justify-between transition-all duration-300 hover:bg-opacity-80 h-full min-h-[120px] cursor-pointer"
     :class="[
       statusColorClass,
       { 'ring-2 ring-aqm-accent': status === 'warning' }
     ]"
+    @click="handleClick"
   >
     <div class="flex items-start justify-between">
       <h3 class="text-aqm-text text-xs md:text-sm font-medium truncate">{{ title }}</h3>
@@ -29,6 +30,10 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+  metricId: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
@@ -47,6 +52,17 @@ const props = defineProps({
     validator: (value) => ['normal', 'warning', 'danger', 'good'].includes(value)
   }
 })
+
+const emit = defineEmits(['configure'])
+
+const handleClick = () => {
+  emit('configure', {
+    metricId: props.metricId,
+    label: props.title,
+    unit: props.unit,
+    isDirection: false
+  })
+}
 
 const formattedValue = computed(() => {
   if (typeof props.value === 'number') {

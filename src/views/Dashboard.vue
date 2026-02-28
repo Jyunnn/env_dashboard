@@ -15,10 +15,12 @@
           <MetricCard
             v-for="chemical in chemicals"
             :key="chemical.id"
+            :metric-id="chemical.id"
             :title="chemical.title"
             :value="chemical.value"
             :unit="chemical.unit"
             :status="chemical.status"
+            @configure="handleOpenConfig"
           />
         </div>
       </section>
@@ -29,11 +31,13 @@
           <EnvCard
             v-for="env in environment"
             :key="env.id"
+            :metric-id="env.id"
             :type="env.icon"
             :label="env.label"
             :value="env.value"
             :unit="env.unit"
             :size="env.size || '1x1'"
+            @configure="handleOpenConfig"
           />
         </div>
       </section>
@@ -43,16 +47,35 @@
         @select="handleDeviceSelect"
       />
     </main>
+
+    <AlarmConfigModal
+      :visible="modalState.visible"
+      :loading="modalState.loading"
+      :device-id="modalState.deviceId"
+      :metric-id="modalState.metricId"
+      :title="modalState.title"
+      :unit="modalState.unit"
+      :is-direction="modalState.isDirection"
+      :config="modalState.config"
+      @close="handleCloseModal"
+      @save="handleSaveConfig"
+    />
+
+    <Toast />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, reactive, computed } from 'vue'
 import Navbar from '@/components/layout/Navbar.vue'
 import MetricCard from '@/components/dashboard/MetricCard.vue'
 import EnvCard from '@/components/dashboard/EnvCard.vue'
 import DeviceMenu from '@/components/dashboard/DeviceMenu.vue'
+import AlarmConfigModal from '@/components/common/AlarmConfigModal.vue'
+import Toast from '@/components/common/Toast.vue'
 import { useMockData } from '@/composables/useMockData'
+import { useAlarmConfig } from '@/composables/useAlarmConfig'
+import { useToast } from '@/composables/useToast'
 
 const {
   chemicals,
@@ -63,6 +86,25 @@ const {
   selectDevice,
   updateTime
 } = useMockData()
+
+const { getAlarmConfig, setAlarmConfig } = useAlarmConfig()
+const { showSuccess, showError } = useToast()
+
+const activeDeviceId = computed(() => {
+  const activeDevice = devices.value.find(d => d.active)
+  return activeDevice ? activeDevice.id : null
+})
+
+const modalState = reactive({
+  visible: false,
+  loading: false,
+  deviceId: null,
+  metricId: '',
+  title: '',
+  unit: '',
+  isDirection: false,
+  config: { min: null, max: null, enabled: false }
+})
 
 let timeInterval = null
 
@@ -96,5 +138,39 @@ const handleNotification = () => {
 const handleDeviceSelect = (deviceId) => {
   selectDevice(deviceId)
   console.log('Device selected:', deviceId)
+}
+
+const handleOpenConfig = (payload) => {
+  if (!activeDeviceId.value) return
+  
+  modalState.deviceId = activeDeviceId.value
+  modalState.metricId = payload.metricId
+  modalState.title = payload.label
+  modalState.unit = payload.unit
+  modalState.isDirection = payload.isDirection
+  modalState.config = getAlarmConfig(activeDeviceId.value, payload.metricId)
+  modalState.loading = false
+  modalState.visible = true
+}
+
+const handleCloseModal = () => {
+  if (!modalState.loading) {
+    modalState.visible = false
+  }
+}
+
+const handleSaveConfig = async (payload) => {
+  modalState.loading = true
+  
+  const result = await setAlarmConfig(payload.deviceId, payload.metricId, payload.config)
+  
+  if (result.success) {
+    showSuccess(result.message)
+    modalState.visible = false
+  } else {
+    showError(result.message)
+  }
+  
+  modalState.loading = false
 }
 </script>

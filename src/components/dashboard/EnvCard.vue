@@ -1,9 +1,10 @@
 <template>
   <div 
-    class="bg-aqm-card rounded-xl transition-all duration-300 hover:bg-opacity-80 h-full"
+    class="bg-aqm-card rounded-xl transition-all duration-300 hover:bg-opacity-80 h-full cursor-pointer"
     :class="[
       size === '2x2' ? 'col-span-2 row-span-2 p-4 md:p-6' : 'p-3 md:p-4 min-h-[100px]'
     ]"
+    @click="handleClick"
   >
     <template v-if="size === '1x1'">
       <div class="h-full flex flex-col items-center justify-center">
@@ -34,6 +35,10 @@
 import { computed, h } from 'vue'
 
 const props = defineProps({
+  metricId: {
+    type: String,
+    required: true
+  },
   type: {
     type: String,
     required: true
@@ -56,6 +61,17 @@ const props = defineProps({
     validator: (value) => ['1x1', '2x2'].includes(value)
   }
 })
+
+const emit = defineEmits(['configure'])
+
+const handleClick = () => {
+  emit('configure', {
+    metricId: props.metricId,
+    label: props.label,
+    unit: props.unit,
+    isDirection: props.type === 'compass'
+  })
+}
 
 const displayValue = computed(() => {
   if (typeof props.value === 'number') {
