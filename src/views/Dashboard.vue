@@ -67,6 +67,14 @@
       @close="historyModalVisible = false"
     />
 
+    <SettingsModal
+      :visible="settingsModalVisible"
+      :settings="settings"
+      :saving="settingsSaving"
+      @close="settingsModalVisible = false"
+      @save="handleSaveSettings"
+    />
+
     <Toast />
   </div>
 </template>
@@ -79,9 +87,11 @@ import EnvCard from '@/components/dashboard/EnvCard.vue'
 import DeviceMenu from '@/components/dashboard/DeviceMenu.vue'
 import AlarmConfigModal from '@/components/common/AlarmConfigModal.vue'
 import HistoryModal from '@/components/history/HistoryModal.vue'
+import SettingsModal from '@/components/common/SettingsModal.vue'
 import Toast from '@/components/common/Toast.vue'
 import { useMockData } from '@/composables/useMockData'
 import { useAlarmConfig } from '@/composables/useAlarmConfig'
+import { useSettings } from '@/composables/useSettings'
 import { useToast } from '@/composables/useToast'
 
 const {
@@ -95,6 +105,7 @@ const {
 } = useMockData()
 
 const { getAlarmConfig, setAlarmConfig } = useAlarmConfig()
+const { settings, loading: settingsLoading, saving: settingsSaving, fetchSettings, saveSettings } = useSettings()
 const { showSuccess, showError } = useToast()
 
 const activeDeviceId = computed(() => {
@@ -114,12 +125,14 @@ const modalState = reactive({
 })
 
 const historyModalVisible = ref(false)
+const settingsModalVisible = ref(false)
 
 let timeInterval = null
 
 onMounted(() => {
   updateTime()
   timeInterval = setInterval(updateTime, 1000)
+  fetchSettings()
 })
 
 onUnmounted(() => {
@@ -129,7 +142,7 @@ onUnmounted(() => {
 })
 
 const handleSettings = () => {
-  console.log('Settings clicked')
+  settingsModalVisible.value = true
 }
 
 const handleTrend = () => {
@@ -181,5 +194,16 @@ const handleSaveConfig = async (payload) => {
   }
   
   modalState.loading = false
+}
+
+const handleSaveSettings = async (newSettings) => {
+  const result = await saveSettings(newSettings)
+  
+  if (result.success) {
+    showSuccess(result.message)
+    settingsModalVisible.value = false
+  } else {
+    showError(result.message)
+  }
 }
 </script>

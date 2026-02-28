@@ -110,6 +110,52 @@
               </div>
             </div>
 
+            <div>
+              <label class="block text-aqm-text text-sm font-medium mb-3">計算方式</label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="aggregation"
+                    value="avg"
+                    class="sr-only"
+                  />
+                  <div
+                    class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+                    :class="aggregation === 'avg'
+                      ? 'border-aqm-accent bg-aqm-accent'
+                      : 'border-aqm-text-dim'"
+                  >
+                    <div
+                      v-if="aggregation === 'avg'"
+                      class="w-2 h-2 rounded-full bg-aqm-dark"
+                    />
+                  </div>
+                  <span class="text-aqm-text">平均值</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="aggregation"
+                    value="median"
+                    class="sr-only"
+                  />
+                  <div
+                    class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+                    :class="aggregation === 'median'
+                      ? 'border-aqm-accent bg-aqm-accent'
+                      : 'border-aqm-text-dim'"
+                  >
+                    <div
+                      v-if="aggregation === 'median'"
+                      class="w-2 h-2 rounded-full bg-aqm-dark"
+                    />
+                  </div>
+                  <span class="text-aqm-text">中位數</span>
+                </label>
+              </div>
+            </div>
+
             <div class="flex items-center gap-3 pt-2">
               <button
                 @click="handleQuery"
@@ -168,6 +214,7 @@ const {
   selectedMetric,
   timeRange,
   interval,
+  aggregation,
   historyData,
   loading,
   error,

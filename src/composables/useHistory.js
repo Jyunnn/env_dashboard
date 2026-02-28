@@ -30,6 +30,7 @@ const timeRange = ref({
   customEnd: null,
 })
 const interval = ref(5)
+const aggregation = ref('avg')
 
 const historyData = ref(null)
 const loading = ref(false)
@@ -137,7 +138,8 @@ export function useHistory() {
           selectedMetric.value,
           range.startTime,
           range.endTime,
-          interval.value
+          interval.value,
+          aggregation.value
         )
       } else {
         const response = await getHistory({
@@ -145,7 +147,8 @@ export function useHistory() {
           metricId: selectedMetric.value,
           startTime: range.startTime,
           endTime: range.endTime,
-          interval: interval.value
+          interval: interval.value,
+          aggregation: aggregation.value
         })
         historyData.value = response.data
       }
@@ -166,6 +169,7 @@ export function useHistory() {
       customEnd: null,
     }
     interval.value = 5
+    aggregation.value = 'avg'
     historyData.value = null
     error.value = null
   }
@@ -179,6 +183,7 @@ export function useHistory() {
     selectedMetric,
     timeRange,
     interval,
+    aggregation,
     historyData,
     loading,
     error,
