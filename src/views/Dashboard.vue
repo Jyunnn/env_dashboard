@@ -4,6 +4,7 @@
       :notification-count="notifications"
       @settings="handleSettings"
       @trend="handleTrend"
+      @history="handleHistory"
       @refresh="handleRefresh"
       @notification="handleNotification"
     />
@@ -75,6 +76,12 @@
       @save="handleSaveSettings"
     />
 
+    <AlarmHistoryModal
+      :visible="alarmHistoryModalVisible"
+      :devices="devices"
+      @close="alarmHistoryModalVisible = false"
+    />
+
     <Toast />
   </div>
 </template>
@@ -88,6 +95,7 @@ import DeviceMenu from '@/components/dashboard/DeviceMenu.vue'
 import AlarmConfigModal from '@/components/common/AlarmConfigModal.vue'
 import HistoryModal from '@/components/history/HistoryModal.vue'
 import SettingsModal from '@/components/common/SettingsModal.vue'
+import AlarmHistoryModal from '@/components/alarm/AlarmHistoryModal.vue'
 import Toast from '@/components/common/Toast.vue'
 import { useMockData } from '@/composables/useMockData'
 import { useAlarmConfig } from '@/composables/useAlarmConfig'
@@ -126,6 +134,7 @@ const modalState = reactive({
 
 const historyModalVisible = ref(false)
 const settingsModalVisible = ref(false)
+const alarmHistoryModalVisible = ref(false)
 
 let timeInterval = null
 
@@ -147,6 +156,10 @@ const handleSettings = () => {
 
 const handleTrend = () => {
   historyModalVisible.value = true
+}
+
+const handleHistory = () => {
+  alarmHistoryModalVisible.value = true
 }
 
 const handleRefresh = () => {

@@ -42,4 +42,17 @@ export const updateSettings = async (data) => {
   return response.data
 }
 
+export const getAlarmHistory = async (params) => {
+  const response = await api.get('/alarm-history', { params })
+  return response.data
+}
+
+export const exportAlarmHistory = async (params) => {
+  const response = await api.get('/alarm-history/export', {
+    params,
+    responseType: 'blob',
+  })
+  return response.data
+}
+
 export default api

@@ -40,7 +40,7 @@ defineProps({
   }
 })
 
-defineEmits(['settings', 'trend', 'refresh', 'notification'])
+defineEmits(['settings', 'trend', 'history', 'refresh', 'notification'])
 
 const SettingsIcon = {
   render() {
@@ -75,6 +75,23 @@ const TrendIcon = {
       }),
       h('path', { 
         d: 'M17 6h6v6',
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round'
+      })
+    ])
+  }
+}
+
+const HistoryIcon = {
+  render() {
+    return h('svg', { 
+      viewBox: '0 0 24 24', 
+      fill: 'none', 
+      stroke: 'currentColor', 
+      'stroke-width': '1.5' 
+    }, [
+      h('path', { 
+        d: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round'
       })
@@ -124,6 +141,7 @@ const BellIcon = {
 const navButtons = [
   { id: 'settings', label: '設定', icon: SettingsIcon, event: 'settings' },
   { id: 'trend', label: '趨勢', icon: TrendIcon, event: 'trend' },
+  { id: 'history', label: '紀錄', icon: HistoryIcon, event: 'history' },
   { id: 'refresh', label: '刷新', icon: RefreshIcon, event: 'refresh' },
   { id: 'notification', label: '通知', icon: BellIcon, event: 'notification', badge: 6 },
 ]
