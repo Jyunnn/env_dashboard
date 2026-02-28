@@ -27,4 +27,9 @@ api.interceptors.response.use(
   }
 )
 
+export const getHistory = async (params) => {
+  const response = await api.get('/history', { params })
+  return response.data
+}
+
 export default api

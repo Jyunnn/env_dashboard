@@ -61,17 +61,24 @@
       @save="handleSaveConfig"
     />
 
+    <HistoryModal
+      :visible="historyModalVisible"
+      :devices="devices"
+      @close="historyModalVisible = false"
+    />
+
     <Toast />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, reactive, computed } from 'vue'
+import { onMounted, onUnmounted, reactive, computed, ref } from 'vue'
 import Navbar from '@/components/layout/Navbar.vue'
 import MetricCard from '@/components/dashboard/MetricCard.vue'
 import EnvCard from '@/components/dashboard/EnvCard.vue'
 import DeviceMenu from '@/components/dashboard/DeviceMenu.vue'
 import AlarmConfigModal from '@/components/common/AlarmConfigModal.vue'
+import HistoryModal from '@/components/history/HistoryModal.vue'
 import Toast from '@/components/common/Toast.vue'
 import { useMockData } from '@/composables/useMockData'
 import { useAlarmConfig } from '@/composables/useAlarmConfig'
@@ -106,6 +113,8 @@ const modalState = reactive({
   config: { min: null, max: null, enabled: false }
 })
 
+const historyModalVisible = ref(false)
+
 let timeInterval = null
 
 onMounted(() => {
@@ -124,7 +133,7 @@ const handleSettings = () => {
 }
 
 const handleTrend = () => {
-  console.log('Trend clicked')
+  historyModalVisible.value = true
 }
 
 const handleRefresh = () => {
