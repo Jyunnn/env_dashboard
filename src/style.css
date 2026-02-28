@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@theme {
+  --color-aqm-dark: #111213;
+  --color-aqm-card: #2A2A2A;
+  --color-aqm-panel: #1F1F1F;
+  --color-aqm-accent: #00E5D0;
+  --color-aqm-danger: #FF4757;
+  --color-aqm-text: #CFCFCF;
+  --color-aqm-text-dim: #A9ADB2;
+  --color-aqm-border: rgba(255, 255, 255, 0.15);
+  
+  --width-device-menu: 110px;
+  --height-navbar: 70px;
+}
