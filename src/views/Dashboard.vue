@@ -1,7 +1,7 @@
 <template>
   <div class="w-screen h-screen min-w-[1024px] min-h-[768px] bg-aqm-dark overflow-hidden flex flex-col">
     <Navbar 
-      :notification-count="notifications"
+      :notification-count="alarmUnreadCount"
       @settings="handleSettings"
       @trend="handleTrend"
       @history="handleHistory"
@@ -82,6 +82,13 @@
       @close="alarmHistoryModalVisible = false"
     />
 
+    <AlarmNotificationModal
+      :visible="alarmNotificationModalVisible"
+      :notifications="alarmNotifications"
+      @close="alarmNotificationModalVisible = false"
+      @read="markAllAsRead"
+    />
+
     <Toast />
   </div>
 </template>
@@ -96,11 +103,13 @@ import AlarmConfigModal from '@/components/common/AlarmConfigModal.vue'
 import HistoryModal from '@/components/history/HistoryModal.vue'
 import SettingsModal from '@/components/common/SettingsModal.vue'
 import AlarmHistoryModal from '@/components/alarm/AlarmHistoryModal.vue'
+import AlarmNotificationModal from '@/components/alarm/AlarmNotificationModal.vue'
 import Toast from '@/components/common/Toast.vue'
 import { useMockData } from '@/composables/useMockData'
 import { useAlarmConfig } from '@/composables/useAlarmConfig'
 import { useSettings } from '@/composables/useSettings'
 import { useToast } from '@/composables/useToast'
+import { useAlarmNotifications } from '@/composables/useAlarmNotifications'
 
 const {
   chemicals,
@@ -135,6 +144,14 @@ const modalState = reactive({
 const historyModalVisible = ref(false)
 const settingsModalVisible = ref(false)
 const alarmHistoryModalVisible = ref(false)
+const alarmNotificationModalVisible = ref(false)
+
+const {
+  notifications: alarmNotifications,
+  unreadCount: alarmUnreadCount,
+  handleAlarm,
+  markAllAsRead,
+} = useAlarmNotifications()
 
 let timeInterval = null
 
@@ -167,7 +184,7 @@ const handleRefresh = () => {
 }
 
 const handleNotification = () => {
-  console.log('Notification clicked')
+  alarmNotificationModalVisible.value = true
 }
 
 const handleDeviceSelect = (deviceId) => {

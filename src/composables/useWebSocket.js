@@ -4,6 +4,7 @@ export function useWebSocket(url) {
   const data = ref(null)
   const status = ref('CONNECTING')
   const error = ref(null)
+  const onAlarm = ref(null)
   let ws = null
 
   const connect = () => {
@@ -17,7 +18,15 @@ export function useWebSocket(url) {
 
     ws.onmessage = (event) => {
       try {
-        data.value = JSON.parse(event.data)
+        const message = JSON.parse(event.data)
+        
+        if (message.type === 'alarm' && onAlarm.value) {
+          onAlarm.value(message.data)
+        } else if (message.type === 'data') {
+          data.value = message.data
+        } else {
+          data.value = message
+        }
       } catch {
         data.value = event.data
       }
@@ -65,5 +74,6 @@ export function useWebSocket(url) {
     send,
     disconnect,
     reconnect,
+    onAlarm,
   }
 }
